@@ -1,0 +1,32 @@
+{
+  "name": "dsh-zhihui-opportunity",
+  "unit": "dsh-zhihui-opportunity",
+  "version": "0.3.0",
+  "previousVersion": "0.2.0",
+  "title": "智汇·商机",
+  "kind": "plugin",
+  "services": [
+    "zhihui-opportunity-api",
+    "zhihui-opportunity-web",
+    "redis-zhihui",
+    "zhihui-sso",
+    "dsh-docs-engine",
+    "dsh-ollama-shim"
+  ],
+  "ports": [
+    3211,
+    3210
+  ],
+  "pluginDir": "@local/zhihui-opportunity",
+  "hasVenv": false,
+  "hasNode": false,
+  "hasHarness": false,
+  "generatedAt": "2026-11-01T22:37:53+08:00",
+  "host": "lgsj",
+  "installScope": [
+    "host-profile",
+    "all-existing-accounts"
+  ],
+  "baseRepo": "imasonhk-spec/dsh",
+  "baseTag": "v0.2.0"
+}
