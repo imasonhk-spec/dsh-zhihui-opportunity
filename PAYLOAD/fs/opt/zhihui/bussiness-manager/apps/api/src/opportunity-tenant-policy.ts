@@ -1,0 +1,1 @@
+export function trustedTenantId(configured:unknown,claimed:unknown){const trusted=String(configured??'').trim();if(!/^[0-9a-f]{8}-[0-9a-f-]{27}$/i.test(trusted))throw new Error('tenant_context_unavailable');const requested=String(claimed??'').trim();if(requested&&requested!==trusted)throw new Error('resource_not_found');return trusted}

@@ -1,0 +1,12 @@
+import {describe,expect,it} from 'vitest'
+import {createHarnessEnvelope,createOpportunityContext,isOpportunityWorkspace,mapOpportunityFailure,shadowToolPolicy} from './opportunity-shadow-adapter.js'
+
+describe('WP-07 opportunity shadow adapter',()=>{
+  const base={tenantId:'tenant-fixture',principal:{type:'service' as const,id:'fixture-service'},workspace:{type:'opportunity' as const,id:'OPP-MASTER' as const,code:'OPP-MASTER' as const},action:'read' as const,requestId:'req-fixture-1',traceId:'trace-fixture-1',sourceApp:'opportunity' as const,authMethod:'service-token' as const}
+  it('constructs only OPP-MASTER read context and forces shadow flags',()=>{const result=createOpportunityContext(base);expect(result).toMatchObject({action:'read',shadowMode:true,productionGateway:false,workspace:{id:'OPP-MASTER'}})})
+  it('rejects cross-workspace and non-read operations',()=>{expect(createOpportunityContext({...base,workspace:{type:'opportunity',id:'OTHER',code:'OTHER'}})).toMatchObject({status:403,error:'workspace_forbidden'});expect(createOpportunityContext({...base,action:'write'})).toMatchObject({status:403,error:'workspace_forbidden'})})
+  it('rejects incomplete context',()=>{expect(createOpportunityContext({...base,requestId:''})).toMatchObject({status:400,error:'request_context_invalid'});expect(createOpportunityContext(undefined)).toMatchObject({status:400,error:'request_context_invalid'})})
+  it('maps auth and dependency failures without payload data',()=>{expect(mapOpportunityFailure('unauthenticated','r','t')).toEqual({status:401,error:'AUTH_REQUIRED',requestId:'r',traceId:'t'});expect(mapOpportunityFailure('upstream')).toMatchObject({status:503,error:'identity_upstream_unavailable'})})
+  it('creates stable Harness client-request envelope',()=>{expect(createHarnessEnvelope('session.prompt',{sessionId:'fixture'},'rpc-fixture-1')).toEqual({type:'client-request',rpcId:'rpc-fixture-1',method:'session.prompt',payload:{sessionId:'fixture'}});expect(()=>createHarnessEnvelope('session.prompt',{},'')).toThrow('rpc_id_invalid')})
+  it('recognizes workspace and denies all side-effect classes',()=>{expect(isOpportunityWorkspace(base.workspace)).toBe(true);expect(isOpportunityWorkspace({...base.workspace,id:'OTHER' as 'OPP-MASTER'})).toBe(false);expect(shadowToolPolicy()).toEqual({shadowMode:true,productionGateway:false,allowNetwork:false,allowWrites:false,allowExternalMessages:false,allowTokenExport:false})})
+})
