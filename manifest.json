@@ -1,8 +1,8 @@
 {
   "name": "dsh-zhihui-opportunity",
   "unit": "dsh-zhihui-opportunity",
-  "version": "0.3.0",
-  "previousVersion": "0.2.0",
+  "version": "0.3.1",
+  "previousVersion": "0.3.0",
   "title": "智汇·商机",
   "kind": "plugin",
   "services": [
@@ -20,7 +20,7 @@
   "hasVenv": false,
   "hasNode": false,
   "hasHarness": false,
-  "generatedAt": "2026-11-02T07:53:53+08:00",
+  "generatedAt": "2026-11-10T10:27:06+08:00",
   "host": "lgsj",
   "installScope": [
     "host-profile",

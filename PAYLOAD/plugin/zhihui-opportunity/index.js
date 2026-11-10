@@ -21,7 +21,7 @@ export const MANIFEST = {
   order: 31,
   icon: '🎯',
   category: '市场经营',
-  version: 'v0.2.0',
+  version: 'v0.1.0',
   tags: ['商机', '市场方案', 'AI 分析', '导入比对'],
   subs: ['商机列表', '商机详情', 'AI 分析', '导入变更', '方案待办'],
   openEvent: 'cappacks:open-zhihui-opportunity',
@@ -31,7 +31,6 @@ const APP_URL = '/zhihui/opportunity/'
 const SSO_URL = '/zhihui-sso/session?app=opportunity'
 const HEALTH_URL = 'http://127.0.0.1:3210/zhihui/opportunity/health'
 
-import { installLicense } from './license-http.mjs'; /* PATCH:V5-o2pack-import */
 export const inject = ['webServer']
 
 function sendJson(res, status, body) {
@@ -63,11 +62,6 @@ async function probe(url, timeoutMs = 2500) {
 export function apply(ctx, _config) {
   const disposers = []
 
-  /* PATCH:V5-o2pack-apply */
-  // 授权门禁：本插件自带授权运行时，不依赖工作台；apply 阶段绝不 throw
-  const __lic = installLicense(ctx, { pluginId: 'zhihui-opportunity', prefix: '/api/zhihui-opportunity' });
-  try { disposers.push(() => { try { __lic.gate.flush(); } catch {} }); } catch {}
-
   try {
     const ws = ctx.webServer || (ctx.get && ctx.get('webServer'))
     if (ws && typeof ws.register === 'function') {
@@ -76,7 +70,6 @@ export function apply(ctx, _config) {
           kind: 'prefix',
           path: '/api/zhihui-opportunity',
           handler(req, res) {
-            if (__lic.guard(req, res)) return; /* PATCH:V5-o2pack-guard */
             const url = new URL(req.url || '/', 'http://127.0.0.1')
             const rest = url.pathname.replace(/^\/api\/zhihui-opportunity/, '').replace(/\/$/, '')
             if (rest === '' || rest === '/health') {
